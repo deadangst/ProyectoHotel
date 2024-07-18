@@ -375,6 +375,67 @@ namespace AccesoDatos
         }
 
         #endregion
+        #region Métodos Habitaciones
+        
+        public bool AgregarHabitacion(Habitacion P_Entidad)
+        {
+            DynamicParameters parametros = new DynamicParameters();
+            parametros.Add("@NumeroHabitacion", P_Entidad.NumeroHabitacion, DbType.Int32, ParameterDirection.Input);
+            parametros.Add("@TipoHabitacion", P_Entidad.TipoHabitacion, DbType.String, ParameterDirection.Input, 50);
+            parametros.Add("@Capacidad", P_Entidad.Capacidad, DbType.Int32, ParameterDirection.Input);
+            parametros.Add("@Precio", P_Entidad.Precio, DbType.Decimal, ParameterDirection.Input);
+
+            using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
+            {
+                return conexionSQL.Execute("PA_AgregarHabitacion", parametros, commandType: CommandType.StoredProcedure) > 0;
+            }
+        }
+
+        public bool ModificarHabitacion(Habitacion P_Entidad)
+        {
+            DynamicParameters parametros = new DynamicParameters();
+            parametros.Add("@HabitacionID", P_Entidad.HabitacionID, DbType.Int32, ParameterDirection.Input);
+            parametros.Add("@NumeroHabitacion", P_Entidad.NumeroHabitacion, DbType.Int32, ParameterDirection.Input);
+            parametros.Add("@TipoHabitacion", P_Entidad.TipoHabitacion, DbType.String, ParameterDirection.Input, 50);
+            parametros.Add("@Capacidad", P_Entidad.Capacidad, DbType.Int32, ParameterDirection.Input);
+            parametros.Add("@Precio", P_Entidad.Precio, DbType.Decimal, ParameterDirection.Input);
+
+            using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
+            {
+                return conexionSQL.Execute("PA_ModificarHabitacion", parametros, commandType: CommandType.StoredProcedure) > 0;
+            }
+        }
+
+        public bool EliminarHabitacion(int habitacionID)
+        {
+            DynamicParameters parametros = new DynamicParameters();
+            parametros.Add("@HabitacionID", habitacionID, DbType.Int32, ParameterDirection.Input);
+
+            using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
+            {
+                return conexionSQL.Execute("PA_EliminarHabitacion", parametros, commandType: CommandType.StoredProcedure) > 0;
+            }
+        }
+
+        public List<Habitacion> ConsultarHabitaciones()
+        {
+            using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
+            {
+                return (List<Habitacion>)conexionSQL.Query<Habitacion>("PA_ConsultarHabitaciones", commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public Habitacion ConsultarHabitacionPorID(int habitacionID)
+        {
+            DynamicParameters parametros = new DynamicParameters();
+            parametros.Add("@HabitacionID", habitacionID, DbType.Int32, ParameterDirection.Input);
+
+            using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
+            {
+                return conexionSQL.Query<Habitacion>("PA_ConsultarHabitacionPorID", parametros, commandType: CommandType.StoredProcedure).FirstOrDefault();
+            }
+        }
+        #endregion
 
         #region Métodos de Disponibilidad
 

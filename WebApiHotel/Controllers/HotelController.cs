@@ -439,6 +439,91 @@ namespace WebApiHotel.Controllers
 
         #endregion
 
+        #region Métodos de Habitaciones
+
+        [HttpPost]
+        [Route(nameof(AgregarHabitacion))]
+        public IActionResult AgregarHabitacion(Habitacion habitacion)
+        {
+            try
+            {
+                var resultado = _sQLServerLN.AgregarHabitacion(habitacion);
+                if (resultado)
+                {
+                    return Ok("Habitacion agregada exitosamente.");
+                }
+                else
+                {
+                    return StatusCode(500, "Error al agregar la habitacion.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error al agregar la habitacion: " + ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route(nameof(ModificarHabitacion))]
+        public IActionResult ModificarHabitacion([FromHeader] int habitacionID, [FromBody] Habitacion habitacion)
+        {
+            try
+            {
+                habitacion.HabitacionID = habitacionID;
+                var resultado = _sQLServerLN.ModificarHabitacion(habitacion);
+                if (resultado)
+                {
+                    return Ok("Habitacion modificada exitosamente.");
+                }
+                else
+                {
+                    return StatusCode(500, "Error al modificar la habitacion.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error al modificar la habitacion: " + ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route(nameof(EliminarHabitacion))]
+        public IActionResult EliminarHabitacion([FromHeader] int habitacionID)
+        {
+            try
+            {
+                var resultado = _sQLServerLN.EliminarHabitacion(habitacionID);
+                if (resultado)
+                {
+                    return Ok("Habitacion eliminada exitosamente.");
+                }
+                else
+                {
+                    return StatusCode(500, "Error al eliminar la habitacion.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error al eliminar la habitacion: " + ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route(nameof(ConsultarHabitaciones))]
+        public IActionResult ConsultarHabitaciones()
+        {
+            return Ok(_sQLServerLN.ConsultarHabitaciones());
+        }
+
+        [HttpGet]
+        [Route(nameof(ConsultarHabitacionPorID))]
+        public IActionResult ConsultarHabitacionPorID([FromHeader] int habitacionID)
+        {
+            return Ok(_sQLServerLN.ConsultarHabitacionPorID(habitacionID));
+        }
+
+        #endregion
+
         #region Métodos de Bitácora
 
         [HttpGet]

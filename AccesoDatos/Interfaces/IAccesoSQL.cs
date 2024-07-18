@@ -30,6 +30,13 @@ namespace AccesoDatos.Interfaces
         bool EliminarPago(int pagoID);
         List<Pago> ConsultarPagos();
 
+        // Métodos de Habitaciones
+        bool AgregarHabitacion(Habitacion P_Entidad);
+        bool ModificarHabitacion(Habitacion P_Entidad);
+        bool EliminarHabitacion(int habitacionID);
+        List<Habitacion> ConsultarHabitaciones();
+        Habitacion ConsultarHabitacionPorID(int habitacionID);
+
         bool VerificarDisponibilidad(int habitacionID, DateTime fechaInicio, DateTime fechaFin);
     }
 }
