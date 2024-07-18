@@ -25,6 +25,7 @@ namespace AccesoDatos.Interfaces
         List<Reserva> ConsultarReservasFiltradas(int estadoID);
         Reserva ConsultarReservaPorID(int reservaID); // Nuevo método para consultar reserva por ID
 
+        // Métodos Pagos
         bool AgregarPago(Pago P_Entidad);
         bool ModificarPago(Pago P_Entidad);
         bool EliminarPago(int pagoID);
