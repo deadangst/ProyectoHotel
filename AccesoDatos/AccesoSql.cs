@@ -19,10 +19,15 @@ namespace AccesoDatos
             _iConfiguracion = iConfiguracion;
         }
 
+        #region Métodos de Usuarios
+
+        // Método para agregar un usuario
         public bool AgregarUsuario(Usuario P_Entidad)
         {
-            DynamicParameters parametros = new DynamicParameters();
+            // Hashear la contraseña antes de guardarla
+            P_Entidad.PasswordHash = BCrypt.Net.BCrypt.HashPassword(P_Entidad.PasswordHash);
 
+            DynamicParameters parametros = new DynamicParameters();
             parametros.Add("@Nombre", P_Entidad.Nombre, DbType.String, ParameterDirection.Input, 25);
             parametros.Add("@Apellido", P_Entidad.Apellido, DbType.String, ParameterDirection.Input, 50);
             parametros.Add("@Email", P_Entidad.Email, DbType.String, ParameterDirection.Input, 50);
@@ -43,10 +48,16 @@ namespace AccesoDatos
             }
         }
 
+        // Método para modificar un usuario
         public bool ModificarUsuario(Usuario P_Entidad)
         {
-            DynamicParameters parametros = new DynamicParameters();
+            // Hashear la nueva contraseña antes de guardarla, si es que se proporcionó una nueva contraseña
+            if (!string.IsNullOrEmpty(P_Entidad.PasswordHash))
+            {
+                P_Entidad.PasswordHash = BCrypt.Net.BCrypt.HashPassword(P_Entidad.PasswordHash);
+            }
 
+            DynamicParameters parametros = new DynamicParameters();
             parametros.Add("@UsuarioID", P_Entidad.UsuarioID, DbType.Int32, ParameterDirection.Input);
             parametros.Add("@Nombre", P_Entidad.Nombre, DbType.String, ParameterDirection.Input, 25);
             parametros.Add("@Apellido", P_Entidad.Apellido, DbType.String, ParameterDirection.Input, 50);
@@ -61,10 +72,10 @@ namespace AccesoDatos
             }
         }
 
+        // Método para eliminar un usuario
         public bool EliminarUsuario(int usuarioID)
         {
             DynamicParameters parametros = new DynamicParameters();
-
             parametros.Add("@UsuarioID", usuarioID, DbType.Int32, ParameterDirection.Input);
 
             using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
@@ -73,6 +84,7 @@ namespace AccesoDatos
             }
         }
 
+        // Método para consultar usuarios
         public List<Usuario> ConsultarUsuarios()
         {
             using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
@@ -81,6 +93,7 @@ namespace AccesoDatos
             }
         }
 
+        // Método para consultar usuarios filtrados por tipo de usuario
         public List<Usuario> ConsultarUsuariosFiltrados(int tipoUsuarioID)
         {
             DynamicParameters parametros = new DynamicParameters();
@@ -92,6 +105,23 @@ namespace AccesoDatos
             }
         }
 
+        // Método para consultar usuario por correo electrónico
+        public Usuario ConsultarUsuarioPorEmail(string email)
+        {
+            DynamicParameters parametros = new DynamicParameters();
+            parametros.Add("@Email", email, DbType.String, ParameterDirection.Input, 50);
+
+            using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
+            {
+                return conexionSQL.Query<Usuario>("PA_ConsultarUsuarioPorEmail", parametros, commandType: CommandType.StoredProcedure).FirstOrDefault();
+            }
+        }
+
+        #endregion
+
+        #region Métodos de Tarjetas de Crédito
+
+        // Método para agregar una tarjeta de crédito
         public bool AgregarTarjetaCredito(TarjetaCredito P_Entidad)
         {
             DynamicParameters parametros = new DynamicParameters();
@@ -107,6 +137,7 @@ namespace AccesoDatos
             }
         }
 
+        // Método para modificar una tarjeta de crédito
         public bool ModificarTarjetaCredito(TarjetaCredito P_Entidad)
         {
             DynamicParameters parametros = new DynamicParameters();
@@ -122,6 +153,7 @@ namespace AccesoDatos
             }
         }
 
+        // Método para eliminar una tarjeta de crédito
         public bool EliminarTarjetaCredito(int tarjetaID)
         {
             DynamicParameters parametros = new DynamicParameters();
@@ -133,6 +165,7 @@ namespace AccesoDatos
             }
         }
 
+        // Método para consultar tarjetas de crédito
         public List<TarjetaCredito> ConsultarTarjetasCredito()
         {
             using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
@@ -141,6 +174,11 @@ namespace AccesoDatos
             }
         }
 
+        #endregion
+
+        #region Métodos de Reservas
+
+        // Método para agregar una reserva
         public bool AgregarReserva(Reserva P_Entidad)
         {
             bool disponible = VerificarDisponibilidad(P_Entidad.HabitacionID, P_Entidad.FechaInicio, P_Entidad.FechaFin);
@@ -164,6 +202,7 @@ namespace AccesoDatos
             }
         }
 
+        // Método para modificar una reserva
         public bool ModificarReserva(Reserva P_Entidad)
         {
             DynamicParameters parametros = new DynamicParameters();
@@ -182,17 +221,71 @@ namespace AccesoDatos
             }
         }
 
+        //// Método para eliminar una reserva
+        //public bool EliminarReserva(int reservaID)
+        //{
+        //    using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
+        //    {
+        //        var parametros = new DynamicParameters();
+        //        parametros.Add("@ReservaID", reservaID, DbType.Int32, ParameterDirection.Input);
+
+        //        try
+        //        {
+        //            // Obtén la información de la reserva antes de eliminarla
+        //            var reserva = conexionSQL.QueryFirstOrDefault<Reserva>("PA_ConsultarReservaPorID", parametros, commandType: CommandType.StoredProcedure);
+
+        //            // Calcula la diferencia en días entre la fecha de hoy y la fecha de inicio de la reserva
+        //            var diasAntesDeInicio = (reserva.FechaInicio - DateTime.Today).Days;
+
+        //            // Si la reserva se cancela dentro de los 15 días antes de la fecha de inicio, aplica la penalización
+        //            if (diasAntesDeInicio < 15)
+        //            {
+        //                var montoPenalizacion = reserva.MontoTotal * 0.2m;
+
+        //                var parametrosPago = new DynamicParameters();
+        //                parametrosPago.Add("@ReservaID", reservaID, DbType.Int32, ParameterDirection.Input);
+        //                parametrosPago.Add("@Monto", montoPenalizacion, DbType.Decimal, ParameterDirection.Input);
+        //                parametrosPago.Add("@FechaPago", DateTime.Now, DbType.Date, ParameterDirection.Input);
+        //                parametrosPago.Add("@MetodoPagoID", 1, DbType.Int32, ParameterDirection.Input); // Asume un método de pago por defecto
+
+        //                conexionSQL.Execute("PA_AgregarPago", parametrosPago, commandType: CommandType.StoredProcedure);
+        //            }
+
+        //            // Elimina la reserva y los pagos asociados que no son multas
+        //            conexionSQL.Execute("PA_EliminarReserva", parametros, commandType: CommandType.StoredProcedure);
+        //            return true;
+        //        }
+        //        catch (SqlException ex)
+        //        {
+        //            // Manejo de errores según sea necesario
+        //            throw new Exception("Error al eliminar la reserva: " + ex.Message);
+        //        }
+        //    }
+        //}
+
+        // Método para eliminar una reserva
         public bool EliminarReserva(int reservaID)
         {
-            DynamicParameters parametros = new DynamicParameters();
-            parametros.Add("@ReservaID", reservaID, DbType.Int32, ParameterDirection.Input);
-
             using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
             {
-                return conexionSQL.Execute("PA_EliminarReserva", parametros, commandType: CommandType.StoredProcedure) > 0;
+                var parametros = new DynamicParameters();
+                parametros.Add("@ReservaID", reservaID, DbType.Int32, ParameterDirection.Input);
+
+                try
+                {
+                    // Elimina la reserva utilizando el procedimiento almacenado que maneja la lógica de penalización
+                    conexionSQL.Execute("PA_EliminarReserva", parametros, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+                catch (SqlException ex)
+                {
+                    // Manejo de errores según sea necesario
+                    throw new Exception("Error al eliminar la reserva: " + ex.Message);
+                }
             }
         }
 
+        // Método para consultar reservas
         public List<Reserva> ConsultarReservas()
         {
             using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
@@ -201,6 +294,7 @@ namespace AccesoDatos
             }
         }
 
+        // Método para consultar reservas filtradas por estado
         public List<Reserva> ConsultarReservasFiltradas(int estadoID)
         {
             DynamicParameters parametros = new DynamicParameters();
@@ -212,6 +306,23 @@ namespace AccesoDatos
             }
         }
 
+        // Método para consultar una reserva por ID
+        public Reserva ConsultarReservaPorID(int reservaID)
+        {
+            DynamicParameters parametros = new DynamicParameters();
+            parametros.Add("@ReservaID", reservaID, DbType.Int32, ParameterDirection.Input);
+
+            using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
+            {
+                return conexionSQL.Query<Reserva>("PA_ConsultarReservaPorID", parametros, commandType: CommandType.StoredProcedure).FirstOrDefault();
+            }
+        }
+
+        #endregion
+
+        #region Métodos de Pagos
+
+        // Método para agregar un pago
         public bool AgregarPago(Pago P_Entidad)
         {
             DynamicParameters parametros = new DynamicParameters();
@@ -226,6 +337,7 @@ namespace AccesoDatos
             }
         }
 
+        // Método para modificar un pago
         public bool ModificarPago(Pago P_Entidad)
         {
             DynamicParameters parametros = new DynamicParameters();
@@ -241,6 +353,7 @@ namespace AccesoDatos
             }
         }
 
+        // Método para eliminar un pago
         public bool EliminarPago(int pagoID)
         {
             DynamicParameters parametros = new DynamicParameters();
@@ -252,6 +365,7 @@ namespace AccesoDatos
             }
         }
 
+        // Método para consultar pagos
         public List<Pago> ConsultarPagos()
         {
             using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
@@ -260,6 +374,11 @@ namespace AccesoDatos
             }
         }
 
+        #endregion
+
+        #region Métodos de Disponibilidad
+
+        // Método para verificar la disponibilidad de una habitación
         public bool VerificarDisponibilidad(int habitacionID, DateTime fechaInicio, DateTime fechaFin)
         {
             DynamicParameters parametros = new DynamicParameters();
@@ -272,5 +391,7 @@ namespace AccesoDatos
                 return conexionSQL.Query<int>("PA_VerificarDisponibilidad", parametros, commandType: CommandType.StoredProcedure).Single() == 1;
             }
         }
+
+        #endregion
     }
 }

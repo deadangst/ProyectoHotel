@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Negocio.Interfaces;
 using System;
 using System.Collections.Generic;
+using BCrypt.Net;
 
 namespace WebApiHotel.Controllers
 {
@@ -33,6 +34,9 @@ namespace WebApiHotel.Controllers
         {
             try
             {
+                // Hashear la contraseña antes de guardarla
+                usuario.PasswordHash = BCrypt.Net.BCrypt.HashPassword(usuario.PasswordHash);
+
                 var resultado = _sQLServerLN.AgregarUsuario(usuario);
                 if (resultado)
                 {
@@ -46,7 +50,7 @@ namespace WebApiHotel.Controllers
                 }
                 else
                 {
-                    return StatusCode(500, "Error al agregar el usuario 2.");
+                    return StatusCode(500, "Error al agregar el usuario.");
                 }
             }
             catch (Exception ex)
@@ -55,7 +59,7 @@ namespace WebApiHotel.Controllers
                 {
                     return Conflict(ex.Message);
                 }
-                return StatusCode(500, "Error al agregar el usuario 3.");
+                return StatusCode(500, "Error al agregar el usuario.");
             }
         }
 
@@ -65,6 +69,12 @@ namespace WebApiHotel.Controllers
         {
             try
             {
+                // Hashear la nueva contraseña si se proporciona
+                if (!string.IsNullOrEmpty(usuario.PasswordHash))
+                {
+                    usuario.PasswordHash = BCrypt.Net.BCrypt.HashPassword(usuario.PasswordHash);
+                }
+
                 var resultado = _sQLServerLN.ModificarUsuario(new Usuario
                 {
                     UsuarioID = usuarioID,
@@ -270,6 +280,30 @@ namespace WebApiHotel.Controllers
             }
         }
 
+        //[HttpDelete]
+        //[Route(nameof(EliminarReserva))]
+        //public IActionResult EliminarReserva([FromHeader] int reservaID)
+        //{
+        //    try
+        //    {
+        //        var resultado = _sQLServerLN.EliminarReserva(reservaID);
+        //        if (resultado)
+        //        {
+        //            _iMongoDBLN.AgregarBitacora(new Bitacora
+        //            {
+        //                TipoAccion = "EliminarReserva",
+        //                UsuarioID = reservaID,
+        //                FechaAccion = DateTime.Now
+        //            });
+        //        }
+        //        return Ok(resultado);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, "Error al eliminar la reserva.");
+        //    }
+        //}
+
         [HttpDelete]
         [Route(nameof(EliminarReserva))]
         public IActionResult EliminarReserva([FromHeader] int reservaID)
@@ -285,12 +319,16 @@ namespace WebApiHotel.Controllers
                         UsuarioID = reservaID,
                         FechaAccion = DateTime.Now
                     });
+                    return Ok("Reserva eliminada exitosamente.");
                 }
-                return Ok(resultado);
+                else
+                {
+                    return StatusCode(500, "Error al eliminar la reserva.");
+                }
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Error al eliminar la reserva.");
+                return StatusCode(500, "Error al eliminar la reserva: " + ex.Message);
             }
         }
 
