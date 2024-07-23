@@ -63,6 +63,14 @@ namespace WebApiHotel.Controllers
             }
         }
 
+        // Método para consultar los perfiles asociados a un usuario mediante su correo electrónico
+        [HttpGet]
+        [Route(nameof(AutorizacionesPorUsuarios))]
+        public List<Perfil> AutorizacionesPorUsuarios([FromHeader] string pEmail)
+        {
+            return _sQLServerLN.AutorizacionesPorUsuarios(new Usuario { Email = pEmail });
+        }
+
         [HttpPut]
         [Route(nameof(ModificarUsuario))]
         public IActionResult ModificarUsuario([FromHeader] int usuarioID, [FromBody] Usuario usuario)

@@ -93,6 +93,45 @@ namespace AccesoDatos
             }
         }
 
+        //Méetodo para conultar autorización por correo electrónico
+
+        public List<Perfil> AutorizacionesPorUsuarios(Usuario P_Entidad)
+        {
+            DynamicParameters parametros = new DynamicParameters();
+            List<Usuario> resultadoSQL = new List<Usuario>();
+            List<Perfil> resultado = new List<Perfil>();
+
+            parametros.Add("@Email", P_Entidad.Email, DbType.String, ParameterDirection.Input, 50);
+            using (var conexionSQL = new SqlConnection(_iConfiguracion.GetConnectionString("ConexionSQLServer")))
+            {
+                resultadoSQL = (List<Usuario>)conexionSQL.Query<Usuario, Perfil, Usuario>("PA_PerfilesPorUsuario",
+                    (V_Usuario, V_Perfil) =>
+                    {
+                        V_Usuario.Perfiles = new List<Perfil>
+                        {
+                    new Perfil
+                    {
+                        codigoPerfil = V_Perfil.codigoPerfil,
+                        descripcion = V_Perfil.descripcion,
+                        estado = V_Perfil.estado,
+                        email = V_Perfil.email
+                    }
+                        };
+
+                        return V_Usuario;
+                    }, splitOn: "splitPerfil", // Indicador de separación entre entidades en la consulta
+                    param: parametros, commandType: CommandType.StoredProcedure);
+            }
+
+            foreach (Usuario reg in resultadoSQL)
+            {
+                resultado.AddRange(reg.Perfiles.ToList());
+            }
+
+            return resultado;
+        }
+
+
         // Método para consultar usuarios filtrados por tipo de usuario
         public List<Usuario> ConsultarUsuariosFiltrados(int tipoUsuarioID)
         {

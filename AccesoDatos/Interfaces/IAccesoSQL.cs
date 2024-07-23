@@ -11,6 +11,7 @@ namespace AccesoDatos.Interfaces
         bool EliminarUsuario(int usuarioID);
         List<Usuario> ConsultarUsuarios();
         List<Usuario> ConsultarUsuariosFiltrados(int tipoUsuarioID);
+        List<Perfil> AutorizacionesPorUsuarios(Usuario P_Entidad);
         Usuario ConsultarUsuarioPorEmail(string email); // Nuevo método para consultar usuario por email
 
         bool AgregarTarjetaCredito(TarjetaCredito P_Entidad);

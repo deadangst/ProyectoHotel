@@ -10,6 +10,7 @@ namespace Negocio.Interfaces
         bool ModificarUsuario(Usuario P_Entidad);
         bool EliminarUsuario(int usuarioID);
         List<Usuario> ConsultarUsuarios();
+        List<Perfil> AutorizacionesPorUsuarios(Usuario P_Entidad);
         List<Usuario> ConsultarUsuariosFiltrados(int tipoUsuarioID);
 
         bool AgregarTarjetaCredito(TarjetaCredito P_Entidad);

@@ -21,6 +21,12 @@ namespace Negocio
             return _AccesoSQL.AgregarUsuario(P_Entidad);
         }
 
+        //Método para Autorizar Perfil por Usuario
+        public List<Perfil> AutorizacionesPorUsuarios(Usuario P_Entidad)
+        {
+            return _AccesoSQL.AutorizacionesPorUsuarios(P_Entidad);
+        }
+
         // Método para modificar un usuario
         public bool ModificarUsuario(Usuario P_Entidad)
         {
