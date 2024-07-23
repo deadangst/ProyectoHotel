@@ -11,6 +11,8 @@ namespace AccesoDatos.Interfaces
         bool EliminarUsuario(int usuarioID);
         List<Usuario> ConsultarUsuarios();
         List<Usuario> ConsultarUsuariosFiltrados(int tipoUsuarioID);
+        List<Perfil> AutorizacionesPorUsuarios(Usuario P_Entidad);
+        Usuario ConsultarUsuarioPorEmail(string email); // Nuevo método para consultar usuario por email
 
         bool AgregarTarjetaCredito(TarjetaCredito P_Entidad);
         bool ModificarTarjetaCredito(TarjetaCredito P_Entidad);
@@ -22,11 +24,20 @@ namespace AccesoDatos.Interfaces
         bool EliminarReserva(int reservaID);
         List<Reserva> ConsultarReservas();
         List<Reserva> ConsultarReservasFiltradas(int estadoID);
+        Reserva ConsultarReservaPorID(int reservaID); // Nuevo método para consultar reserva por ID
 
+        // Métodos Pagos
         bool AgregarPago(Pago P_Entidad);
         bool ModificarPago(Pago P_Entidad);
         bool EliminarPago(int pagoID);
         List<Pago> ConsultarPagos();
+
+        // Métodos de Habitaciones
+        bool AgregarHabitacion(Habitacion P_Entidad);
+        bool ModificarHabitacion(Habitacion P_Entidad);
+        bool EliminarHabitacion(int habitacionID);
+        List<Habitacion> ConsultarHabitaciones();
+        Habitacion ConsultarHabitacionPorID(int habitacionID);
 
         bool VerificarDisponibilidad(int habitacionID, DateTime fechaInicio, DateTime fechaFin);
     }

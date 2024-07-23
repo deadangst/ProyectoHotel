@@ -2,6 +2,7 @@
 using Negocio.Interfaces;
 using AccesoDatos.Interfaces;
 using System.Collections.Generic;
+using System;
 
 namespace Negocio
 {
@@ -18,6 +19,12 @@ namespace Negocio
         public bool AgregarUsuario(Usuario P_Entidad)
         {
             return _AccesoSQL.AgregarUsuario(P_Entidad);
+        }
+
+        //Método para Autorizar Perfil por Usuario
+        public List<Perfil> AutorizacionesPorUsuarios(Usuario P_Entidad)
+        {
+            return _AccesoSQL.AutorizacionesPorUsuarios(P_Entidad);
         }
 
         // Método para modificar un usuario
@@ -126,6 +133,39 @@ namespace Negocio
         public List<Pago> ConsultarPagos()
         {
             return _AccesoSQL.ConsultarPagos();
+        }
+        #endregion
+        #region Habitaciones
+        
+        public bool AgregarHabitacion(Habitacion P_Entidad)
+        {
+            return _AccesoSQL.AgregarHabitacion(P_Entidad);
+        }
+
+        public bool ModificarHabitacion(Habitacion P_Entidad)
+        {
+            return _AccesoSQL.ModificarHabitacion(P_Entidad);
+        }
+
+        public bool EliminarHabitacion(int habitacionID)
+        {
+            return _AccesoSQL.EliminarHabitacion(habitacionID);
+        }
+
+        public List<Habitacion> ConsultarHabitaciones()
+        {
+            return _AccesoSQL.ConsultarHabitaciones();
+        }
+
+        public Habitacion ConsultarHabitacionPorID(int habitacionID)
+        {
+            return _AccesoSQL.ConsultarHabitacionPorID(habitacionID);
+        }
+
+        // Método para verificar la disponibilidad de una habitación
+        public bool VerificarDisponibilidad(int habitacionID, DateTime fechaInicio, DateTime fechaFin)
+        {
+            return _AccesoSQL.VerificarDisponibilidad(habitacionID, fechaInicio, fechaFin);
         }
         #endregion
     }

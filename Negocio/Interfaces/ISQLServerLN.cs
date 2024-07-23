@@ -1,4 +1,5 @@
 ﻿using Entidades.SQLServer;
+using System;
 using System.Collections.Generic;
 
 namespace Negocio.Interfaces
@@ -9,6 +10,7 @@ namespace Negocio.Interfaces
         bool ModificarUsuario(Usuario P_Entidad);
         bool EliminarUsuario(int usuarioID);
         List<Usuario> ConsultarUsuarios();
+        List<Perfil> AutorizacionesPorUsuarios(Usuario P_Entidad);
         List<Usuario> ConsultarUsuariosFiltrados(int tipoUsuarioID);
 
         bool AgregarTarjetaCredito(TarjetaCredito P_Entidad);
@@ -26,5 +28,14 @@ namespace Negocio.Interfaces
         bool ModificarPago(Pago P_Entidad);
         bool EliminarPago(int pagoID);
         List<Pago> ConsultarPagos();
+
+        // Métodos de Habitaciones
+        bool AgregarHabitacion(Habitacion P_Entidad);
+        bool ModificarHabitacion(Habitacion P_Entidad);
+        bool EliminarHabitacion(int habitacionID);
+        List<Habitacion> ConsultarHabitaciones();
+        Habitacion ConsultarHabitacionPorID(int habitacionID);
+
+        bool VerificarDisponibilidad(int habitacionID, DateTime fechaInicio, DateTime fechaFin);
     }
 }

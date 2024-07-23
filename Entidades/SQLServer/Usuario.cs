@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Entidades.SQLServer
 {
@@ -14,6 +15,8 @@ namespace Entidades.SQLServer
         public int TipoUsuarioID { get; set; }
         public string PasswordHash { get; set; }
 
+        public List<Perfil> Perfiles { get; set; }
+
         #endregion
 
         #region Constructor
@@ -27,6 +30,7 @@ namespace Entidades.SQLServer
             Telefono = string.Empty;
             TipoUsuarioID = 4; // Asumiendo que el tipo por defecto es Cliente
             PasswordHash = string.Empty;
+            Perfiles = new List<Perfil>();
         }
 
         #endregion
